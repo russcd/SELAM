@@ -1,0 +1,38 @@
+This is README file for this simulation example. 
+It will provide an outline for the functionality of each file. 
+In order to run the simulation, you may use the command line: 
+
+<executable> -d example2_demography.txt -s example2_selection.txt -o example2_output.txt -c 2 1 0
+
+This example gives the framework for a simulation of numerous admixed populations that are all related through complex demography. 
+
+Here, we use '-c 2 1 0' to simulate a single autosomal chromsome within a dieocious population (X has length 0).
+Initially a single population (0) is founded with proportions 0.998 and 0.002 ancestry. For the following
+20 generations, this subpopultion experiences migration from the ancestral ancestry 1 subpopulation at rate
+0.002 per generation, the remaining 0.998 proportion of individuals are generated from offspring of the previous
+generation within subpopulation 1. At generation 20, ancestral migration stops. 
+
+While in previous examples, the population size stayed constant throughout the entire simulation, 
+this demography file specifies that populations “1” and “2” are founded during the simulation. 
+For example, refer to generation 150 of the “example2_demography.txt” – note that population “1” 
+grows from 1 individual to 5000 individuals; in generation 200, population “1” shrinks to one individual.
+We do this because subpopulations must exist throughout the simulation in SELAM, but a single individual
+is not computationally expensive and is therefore a placeholder until the population is founded.  
+Likewise, note that each generation, migration between subpopulations is taking place: in this particular case, 
+population “1” and “2” replace population “0” at generation 150 and generation 200, respectively. 
+
+The output file instructs SELAM to output 200 females from population “2” and “0” after generation 400. 
+As can be seen in the output file, “example2_output.txt,” the output for population “2” can be retrieved 
+from “example2_pop2.txt” while the output for population “0” goes to “example2_pop0.txt.” 
+Once again, the individuals will be represented by ancestry tract information as described in the manual– 
+the output will give an alternating sequence of each chromosome, organized by ancestry type. 
+
+The file “example2_selection.txt” gives a population specific selection. 
+For a complete understanding of the selection file format, refer to the manual. 
+In this example, a selected locus on chromosome 0 at position 0.5 is specified. 
+The following nine values provide the selection coefficients for genotypes in each subpopulation (i.e. AA, Aa, aa). 
+For example, if an individual in population “2” has the genotype AA for the selected loci, 
+the corresponding selection coefficient is 0.95; 
+if the individual had the genotype Aa, the corresponding selection coefficient would be 0.975. 
+Whereas if the individual had the genotype aa, the corresponding selection coefficient is 1. 
+
