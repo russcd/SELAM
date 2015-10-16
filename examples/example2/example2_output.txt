@@ -1,0 +1,2 @@
+400	2	200	0	example2_pop2.txt
+400	0	200	0	example2_pop0.txt
