@@ -1,0 +1,16 @@
+This is README file for this simulation example. 
+It will provide an outline for the functionality of each file. 
+In order to run the simulation, you may use the command line: 
+
+<executable> -d example1_demography.txt -o example1_output.txt -g 31 
+
+This example gives the framework for a basic simulation for a single admixed population without selection. 
+The demography file (example1_demography.txt) specifies a single population of 2000 individuals (1000 males and 1000 females), 
+initially composed of equal amounts of ancestral population one and two. The initial demography can be seen in the “0” column.  
+In each subsequent column, 1 and 10, the migration rates are alter. 
+From generation 1 until generation 10, there is no migration from either ancestral population to the new population; 
+after generation 10, ancestral migrants will fill 2% of the new individuals in the population, the remaining 98% are generated from parents within the subpopulation. 
+
+The output file will instruct the program to output 100 female individuals chosen randomly from the population after the 30th generation; 
+the data will be stored in a text file named “population1_output.txt.” 
+
