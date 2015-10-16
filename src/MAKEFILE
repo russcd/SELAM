@@ -1,0 +1,13 @@
+##  A MAKEFILE FOR SELAM. TO USE, RUN THE COMMAND "make -f MAKEFILE" VIA COMMAND LINE ##
+
+CFLAGS = -ltcmalloc -lgsl -lblas 
+
+## IF TCMALLOC IS NOT INSTALLED, REMOVE THE # IN FRONT OF THE FOLLOWING LINE: 
+#CFLAGS = -lgsl -lblass
+
+all:
+	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(CFLAGS) -o SELAM
+
+## In many cases, tcmalloc will substantially decrease runtime of SELAM
+## on mac osx it can be installed using homebrew: brew install google-perftools
+## on ubuntu distributions you may try: sudo apt-get install google-perftools libgoogle-perftools-dev
