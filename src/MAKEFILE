@@ -3,7 +3,7 @@
 CFLAGS = -ltcmalloc -lgsl -lblas 
 
 ## IF TCMALLOC IS NOT INSTALLED, REMOVE THE # IN FRONT OF THE FOLLOWING LINE: 
-#CFLAGS = -lgsl -lblass
+#CFLAGS = -lgsl -lblas
 
 all:
 	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(CFLAGS) -o SELAM
