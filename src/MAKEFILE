@@ -7,6 +7,8 @@ CFLAGS = -ltcmalloc -lgsl -lblas
 
 all:
 	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(CFLAGS) -o SELAM
+	$(LINK.cc) -std=c++0x SELAM_STATS.cpp -o SELAM_STATS
+
 
 ## In many cases, tcmalloc will substantially decrease runtime of SELAM
 ## on mac osx it can be installed using homebrew: brew install google-perftools
