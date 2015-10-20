@@ -90,6 +90,12 @@ int main ( int argc, char **argv ) {
     else {
         pop.print_stats(0);
     }
+    
+    //// set end point to last output time if output is specified
+    if ( pop.output.size() > 0 ) {
+        options.generations = pop.output.at(pop.output.size()-2).gen + 1 ;
+    }
+    
     //// evolve populations
     for ( int g = 1 ; g < options.generations ; g ++ ) {
         /// throw out the trash
