@@ -2,7 +2,7 @@ This is README file for this simulation example.
 It will provide an outline for the functionality of each file. 
 In order to run the simulation, you may use the command line: 
 
-<executable> -d example1_demography.txt -o example1_output.txt -g 31 
+<executable> -d example1_demography.txt -o example1_output.txt 
 
 This example gives the framework for a basic simulation for a single admixed population without selection. 
 The demography file (example1_demography.txt) specifies a single population of 2000 individuals (1000 males and 1000 females), 
