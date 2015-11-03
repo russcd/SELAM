@@ -1,8 +1,10 @@
 /// SELAM STATS
 /// THIS CODE IS DISTRIBUTED WITH SELAM AND WILL PRODUCE SOME BASIC STATISTICS FOR SELAM OUTPUT
 
-/// VERSION 0.03
+/// VERSION 0.04
 
+#include <algorithm>
+#include <string.h> 
 #include <string>
 #include <iostream>
 #include <vector>

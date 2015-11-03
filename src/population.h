@@ -554,13 +554,15 @@ void population::read_demography_file ( string demography_file, cmd_line &option
             demography.at(k).migration_rates_female[j][j] = keep_f;
         }
     }
-    for (int p = 0; p < demography.at(0).ancestral_rates_male.size(); p++) {
-        float total_m = 0.0;
-        for (int i = 0; i < demography.at(0).ancestral_rates_male.at(p).size(); i++) {
-            total_m += (float) demography.at(0).ancestral_rates_male.at(p).at(i);
-        }
-        if (total_m != 1.0) {
-            options.error(6.0, to_string(p));
+    if (!hermaphroditic) {
+        for (int p = 0; p < demography.at(0).ancestral_rates_male.size(); p++) {
+            float total_m = 0.0;
+            for (int i = 0; i < demography.at(0).ancestral_rates_male.at(p).size(); i++) {
+                total_m += (float) demography.at(0).ancestral_rates_male.at(p).at(i);
+            }
+            if (total_m != 1.0) {
+                options.error(6.0, to_string(p));
+            }
         }
     }
 
