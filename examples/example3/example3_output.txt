@@ -1,0 +1,1 @@
+2000    0       10     10       modern_humans.txt
