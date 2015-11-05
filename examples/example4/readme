@@ -1,0 +1,8 @@
+This will simulate a hermaphroditic hybrid population that includes complex selection including DMI's and individually adaptive loci.
+
+Here we consider only two chromosomes each of length 1 morgans.
+Notice that specifying '-h' on the command line below will create a hermaphroditic population.
+This population will be initially 40% ancestry 0 and 60% ancestry 1. 
+For the first 10 generations, this population experiences gene flow from ancestral populations at rates 0.05 and 0.1. 
+
+./SELAM -d example4_demography.txt -s example4_selection.txt -o example4_output.txt -c 2 1 1 -h
