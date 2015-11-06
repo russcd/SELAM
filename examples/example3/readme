@@ -4,5 +4,6 @@ This is an neutral simulation, and begins at the time of the initial admixture e
 The initial population is size 2000 (1/2 female), and grows in generations 1000, 1500, and 1800. 
 This will simulate all nearly all recombining regions in the human genome. 
 At generation 2000, this simulation will output 10 females and 10 males to a file titled modern_humans.txt. 
+Notice that the option, '-m 0.7', below indicates that the male map is 70% of the length of the female recombination map 
 
-./SELAM -d example3_demography.txt -c 23 2.84 2.69 2.23 2.14 2.04 1.92 1.87 1.68 1.66 1.81 1.58 1.75 1.26 1.19 1.41 1.34 1.28 1.17 1.08 1.08 0.63 0.73 1.82 -o example3_output.txt
+./SELAM -d example3_demography.txt -c 23 2.84 2.69 2.23 2.14 2.04 1.92 1.87 1.68 1.66 1.81 1.58 1.75 1.26 1.19 1.41 1.34 1.28 1.17 1.08 1.08 0.63 0.73 1.82 -o example3_output.txt -m 0.7
