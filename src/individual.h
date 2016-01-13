@@ -37,10 +37,10 @@ void individual::print ( vector<float> &chromosome_lengths, ostream &output_stre
         if ( chromosome_lengths.at(c/2) == 0 ) {
             continue ;
         }
-        
+    
         float current_start = chromosomes.at(c).at(0)->ancestry_switch.front().first ;
         int current_track = chromosomes.at(c).at(0)->ancestry_switch.front().second ;
-
+        
         // Iterate between ancestral tracks, print tracks separately based on state
         for ( int a = 0 ; a < chromosomes.at(c).size() ; a ++ ) {
             for ( auto t = chromosomes.at(c).at(a)->ancestry_switch.begin() ; t != chromosomes.at(c).at(a)->ancestry_switch.end() ; t++ ) {
@@ -51,6 +51,7 @@ void individual::print ( vector<float> &chromosome_lengths, ostream &output_stre
                 }
             }
         }
+        
         // Print last track of chromosome
         output_stream << gen << "\t" << subpop << "\t" << male << "\t" << index << "\t" << c/2 << "\t" << c%2 << "\t" << current_track << "\t" << current_start << "\t" << chromosome_lengths.at(c/2) << endl ;
         output_stream << "##" << "\t" << gen << "\t" << subpop << "\t" << male << "\t" << index << "\t" << c/2 << "\t" << c%2 ;

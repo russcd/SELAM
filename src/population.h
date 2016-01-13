@@ -588,6 +588,7 @@ void population::read_demography_file ( string demography_file, cmd_line &option
 
 void population::initialize_demography(int g) {
     populations.resize(num_sub);
+    sites_to_track.resize(chromosome_lengths.size());
 }
 
 /* Feed in selection parameters to the subpopulations specific vectors from the external file SELECTION_FILE. */
@@ -600,7 +601,6 @@ void population::read_selection_file ( string selection_file ) {
     for (int k = 0; k < populations.size(); k++) {
         populations.at(k).selection.male_sites.resize(chromosome_lengths.size());
         populations.at(k).selection.female_sites.resize(chromosome_lengths.size());
-        sites_to_track.resize(chromosome_lengths.size());
     }
 
 
@@ -862,6 +862,7 @@ void population::add_mutations(individual old, individual &new_ind, int a, bool 
     new_ind.chromosomes.resize( old.chromosomes.size() ) ;
     
     for (int r = 0; r < sites_to_track.size(); r++) {
+        
         for (int d = 0; d < 2; d++) {
             
             /// x chromosome / male check
@@ -870,7 +871,7 @@ void population::add_mutations(individual old, individual &new_ind, int a, bool 
             }
             
             /// now record mutations that are needed
-            vector<vector<float> > sites_to_add(old.chromosomes.at(r*2+d).size() ) ;
+            vector<vector<float> > sites_to_add( old.chromosomes.at(r*2+d).size() ) ;
             sites_to_add.resize( old.chromosomes.at(r*2+d).size() ) ;
             for (int m = 0; m < sites_to_track.at(r).size(); m++) {
                 if (gsl_ran_flat(rng, 0, 1) < float(ancestry_site_frequencies[r][sites_to_track.at(r).at(m)].at(a))) {
@@ -902,9 +903,9 @@ void population::add_mutations(individual old, individual &new_ind, int a, bool 
                 }
             }
         }
-    } 
+    }
 }
- 
+
 /* Compute how many individuals will move between subpopulations and populate parental vecotrs MALE_PARENTS and 
  * FEMALE_PARENTS. Each vector is indexed by the subpopulation and the amount of individuals coming from each 
  * population. */

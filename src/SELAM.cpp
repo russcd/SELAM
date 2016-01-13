@@ -81,7 +81,8 @@ int main ( int argc, char **argv ) {
 
     if (options.freq_file) {
         pop.read_freq_file(options.freq_file);
-    } else {
+    }
+    else {
         pop.default_freq();
     }
     
@@ -105,6 +106,7 @@ int main ( int argc, char **argv ) {
     
     //// evolve populations
     for ( int g = 1 ; g < options.generations ; g ++ ) {
+                
         /// throw out the trash
         if ( g % options.garbage_freq == 0 ) {
             pop.garbage_collect();
