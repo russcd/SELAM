@@ -53,10 +53,10 @@ void individual::print ( vector<float> &chromosome_lengths, ostream &output_stre
         }
         // Print last track of chromosome
         output_stream << gen << "\t" << subpop << "\t" << male << "\t" << index << "\t" << c/2 << "\t" << c%2 << "\t" << current_track << "\t" << current_start << "\t" << chromosome_lengths.at(c/2) << endl ;
-        output_stream << "##" << "\t" << c << "\t" << c%2 << "\t";
+        output_stream << "##" << "\t" << gen << "\t" << subpop << "\t" << male << "\t" << index << "\t" << c/2 << "\t" << c%2 ;
         for (int a = 0; a < chromosomes.at(c).size(); a++) {
             for (int m = 0; m < chromosomes.at(c).at(a)->selected_mutations.size(); m++) {
-                output_stream << chromosomes.at(c).at(a)->selected_mutations.at(m) << "\t";
+                output_stream << "\t" << chromosomes.at(c).at(a)->selected_mutations.at(m) ;
             }
         }
         output_stream << endl;
