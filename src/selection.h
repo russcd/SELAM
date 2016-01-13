@@ -74,7 +74,7 @@ public:
  * and the "state", or ancestral relationship, and a vector of SELECTED_MUTATIONS. */
 class ancestry_block {
 public:
-    list< pair<float,char> > ancestry_switch ;          // Stores beginning sites and the "state," or ancestral population it belongs to
+    list< pair<float,int> > ancestry_switch ;          // Stores beginning sites and the "state," or ancestral population it belongs to
     vector<float> selected_mutations ;                  // Selected mutations on the particular ancestry_block
 } ;
 

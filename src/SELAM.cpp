@@ -78,6 +78,12 @@ int main ( int argc, char **argv ) {
         custom_output = true;
         pop.curr_output = 0;
     }
+
+    if (options.freq_file) {
+        pop.read_freq_file(options.freq_file);
+    } else {
+        pop.default_freq();
+    }
     
     //// initialize subpopulations
     pop.initialize_ancestry() ;
@@ -95,7 +101,7 @@ int main ( int argc, char **argv ) {
     if ( pop.output.size() > 0 ) {
         options.generations = pop.output.at(pop.output.size()-2).gen + 1 ;
     }
-    
+  
     //// evolve populations
     for ( int g = 1 ; g < options.generations ; g ++ ) {
         /// throw out the trash
@@ -107,9 +113,9 @@ int main ( int argc, char **argv ) {
         pop.update_demography(g);
         pop.migrate();
         pop.select_parents();
+
         
         // now create new offspring and add them to the appropriate subpopulation
-        // 0.08
         if (!options.hermaphroditic) {
             pop.create_offspring(pop.total_male_parents, true);
         }

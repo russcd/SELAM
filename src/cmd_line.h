@@ -36,6 +36,7 @@ public:
     char* selection_file ;                     /// file that describes sites experiencing selection
     char* demography_file;                     /// file that describes the demography of generations
     char* output_file;
+    char* freq_file;
     bool hit_error;
     double male_recomb_scalar;
 
@@ -56,7 +57,8 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
     selection_file = NULL;
     demography_file = NULL;
     output_file = NULL ; 
-    
+    freq_file = NULL;
+
     track_lengths = false;
     track_freq = false;
     hermaphroditic = false;
@@ -90,6 +92,9 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
         }
         if ( strcmp(argv[i], "--dem") == 0 || strcmp(argv[i],"-d") == 0 ) {
             demography_file = argv[++i];
+        }
+        if (strcmp(argv[i], "--freq") == 0 || strcmp(argv[i], "-f") == 0) {
+            freq_file = argv[++i];
         }
         if ( strcmp(argv[i],"-c") == 0 ) {
             chrom_lengths.clear() ;
