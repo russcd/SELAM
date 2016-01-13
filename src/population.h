@@ -72,7 +72,7 @@ public:
     void check_output_file();
     void compute_fitness() ;
     void initialize_ancestry () ;
-    void add_mutations(individual* new_ind, int anc_type, bool male);
+    void add_mutations(individual old, individual &new_ind, int anc_type, bool male);
     void read_cmd_line(cmd_line &options);
     void initialize_demography(int g);
     void update_demography(int g);
@@ -772,8 +772,7 @@ void population::default_freq() {
 /* Begin the simulation by populating the population object with the parameters given by the user. */
 void population::initialize_ancestry ( ) {
 
-    vector<individual> anc_females;
-    vector<individual> anc_males;
+    parental.resize(num_anc);
     for (int i = 0; i < num_anc; i++) {
         individual female;
         female.chromosomes.resize(chromosome_lengths.size() * 2);
@@ -791,17 +790,22 @@ void population::initialize_ancestry ( ) {
                 female.chromosomes.at(r*2+1).push_back( ancestry_blocks.back() ) ;
             }
         }
-        anc_females.push_back(female);
+        parental.at(i).females.push_back(female) ;
     }
+    
     /// remove second X chromosome if x is present and push each into male population vectors
     if (!hermaphroditic) {
-        for (int i = 0; i < anc_females.size(); i++) {
+        for (int i = 0; i < parental.size(); i++) {
             individual male;
-            male = anc_females.at(i);
-            male.chromosomes.pop_back() ;      // Pop second x b/c males are XY
-            anc_males.push_back(male);
+            male = parental.at(i).females.at(0) ;
+            male.chromosomes.pop_back() ;                   // Pop second x b/c males are XY
+            parental.at(i).males.push_back(male) ;
         }
     }
+    
+    /// this stores the position of ancestral  ancestry blocks to prevent their garabage collection
+    ancestor_block_number = ancestry_blocks.size() ;
+    
     /// now store those individuals
     for ( int i = 0 ; i < populations.size() ; i ++ ) {
         // males and females at their respective population size
@@ -818,12 +822,13 @@ void population::initialize_ancestry ( ) {
                 fem_ind += demography.at(0).pop_size_female[i] * demography.at(0).ancestral_rates_female[i][a-1];
             }
             for (int f = fem_ind; f < demography.at(0).pop_size_female[i] * demography.at(0).ancestral_rates_female[i][a] + fem_ind; f++) {
-                individual new_female = anc_females.at(a);
-                add_mutations(&new_female, a, false);
+                individual new_female ;
+                add_mutations(parental.at(a).females.at(0), new_female, a, false);
                 populations.at(i).females.at(f) = new_female;
             }
             a++;
         }
+        
         /// now store male individuals
         a = 0;
         int male_ind = 0;
@@ -833,26 +838,15 @@ void population::initialize_ancestry ( ) {
                     male_ind += demography.at(0).pop_size_male[i] * demography.at(0).ancestral_rates_male[i][a-1];
                 }
                 for (int m = male_ind; m < demography.at(0).pop_size_male[i] * demography.at(0).ancestral_rates_male[i][a] + male_ind; m++) {
-                    individual new_male = anc_males.at(a);
-                    add_mutations(&new_male, a, true);
+                    individual new_male ;
+                    add_mutations(parental.at(a).males.at(0), new_male, a, true);
                     populations.at(i).males.at(m) = new_male;
                 }
                 a++;
             }
         }
     }
-    /// store position
-    ancestor_block_number = ancestry_blocks.size() ;
     
-    /// now store the parental individuals to be copied later
-    parental.resize(num_anc);
-    for (int a = 0; a < num_anc; a++) {
-        parental.at(a).females.push_back(anc_females.at(a)) ;
-        if (!hermaphroditic) {
-            parental.at(a).males.push_back(anc_males.at(a));
-        }
-    }
-
     for (int p = 0; p < num_sub; p++) {
         if (!hermaphroditic) {
             populations.at(p).initialize_gsl(1, true);
@@ -863,30 +857,48 @@ void population::initialize_ancestry ( ) {
     }
 }
 
-/// generate a new individual
-void population::add_mutations(individual* new_ind, int a, bool male) {
+void population::add_mutations(individual old, individual &new_ind, int a, bool male) {
+    
+    new_ind.chromosomes.resize( old.chromosomes.size() ) ;
+    
     for (int r = 0; r < sites_to_track.size(); r++) {
         for (int d = 0; d < 2; d++) {
-            if (r*2+d == new_ind->chromosomes.size()) {          /// skip second x in males
+            
+            /// x chromosome / male check
+            if (r*2+d == old.chromosomes.size() ) {
                 continue;
             }
             
-            //// decide if mutations need to be added
+            /// now record mutations that are needed
+            vector<vector<float> > sites_to_add(old.chromosomes.at(r*2+d).size() ) ;
+            sites_to_add.resize( old.chromosomes.at(r*2+d).size() ) ;
             for (int m = 0; m < sites_to_track.at(r).size(); m++) {
                 if (gsl_ran_flat(rng, 0, 1) < float(ancestry_site_frequencies[r][sites_to_track.at(r).at(m)].at(a))) {
-                    
-                    ancestry_block* new_block = new ancestry_block;
                     int num = floor(sites_to_track.at(r).at(m) / ancestry_block_length);
-                    for (auto s = new_ind->chromosomes.at(r*2+d).at(num)->ancestry_switch.begin(); s != new_ind->chromosomes.at(r*2+d).at(num)->ancestry_switch.end(); s++) {
+                    sites_to_add[num].push_back( sites_to_track.at(r).at(m) ) ;
+                }
+            }
+            
+            /// now create new blocks with those mutations
+            for ( int block = 0 ; block < sites_to_add.size() ; block ++ ) {
+                
+                /// block with no mutations are equal to ancestral
+                if ( sites_to_add[block].size() == 0 ) {
+                    new_ind.chromosomes.at(r*2+d).push_back( old.chromosomes.at(r*2+d).at(block) ) ;
+                }
+                
+                else {
+                    
+                    ancestry_block *new_block = new ancestry_block ;
+                    for (auto s = old.chromosomes.at(r*2+d).at(block)->ancestry_switch.begin(); s != old.chromosomes.at(r*2+d).at(block)->ancestry_switch.end(); s++) {
                         new_block->ancestry_switch.push_back(*s);
                     }
-                    
-                    for ( int l = 0 ; l < new_ind->chromosomes.at(r*2+d).at(num)->selected_mutations.size() ; l ++ ) {
-                        new_block->selected_mutations.push_back( new_ind->chromosomes.at(r*2+d).at(num)->selected_mutations.at(l) ) ;
+                
+                    for ( int m = 0 ; m < sites_to_add.at(block).size() ; m ++ ) {
+                        new_block->selected_mutations.push_back(sites_to_add.at(block).at(m)) ;
                     }
-                    
-                    new_block->selected_mutations.push_back(sites_to_track.at(r).at(m));
-                    new_ind->chromosomes.at(r*2+d).at(num) = new_block;
+                    ancestry_blocks.push_back( new_block ) ;
+                    new_ind.chromosomes.at(r*2+d).push_back( ancestry_blocks.back() ) ;
                 }
             }
         }
@@ -1177,15 +1189,15 @@ void population::add_offspring() {
     for (int i = 0; i < populations.size(); i++) {
         for (int a = 0; a < populations.at(i).num_anc_male.size(); a++) {
             for (int s = 0; s < populations.at(i).num_anc_male[a]; s++) {
-                individual new_male = parental.at(a).males.at(0);
-                add_mutations(&new_male, a, true);
+                individual new_male ;
+                add_mutations(parental.at(a).males.at(0), new_male, a, true);
                 populations.at(i).new_males.push_back(new_male);
             }
         }
         for (int a = 0; a < populations.at(i).num_anc_female.size(); a++) {
             for (int s = 0; s < populations.at(i).num_anc_female[a]; s++) {
-                individual new_female = parental.at(a).females.at(0);
-                add_mutations(&new_female, a, false);
+                individual new_female ;
+                add_mutations(parental.at(a).females.at(0), new_female, a, false);
                 populations.at(i).new_females.push_back(new_female);
             }
         }
@@ -1328,9 +1340,21 @@ void population::print_stats(int g) {
 }
 
 void population::garbage_collect() {
+    
     // map to hold the ancestry blocks still in use
     map<ancestry_block*, bool> extant;
 
+    // retain parental blocks
+    // no need to record males, they're only a subset of the blocks present in females
+    for ( int a = 0 ; a < parental.size() ; a ++ ) {
+        for ( int c = 0 ; c < parental.at(a).females.at(0).chromosomes.size() ; c++ ) {
+            for ( int b = 0 ; b < parental.at(a).females.at(0).chromosomes.at(c).size() ; b ++ ) {
+                extant[parental.at(a).females.at(0).chromosomes.at(c).at(b)] = true ;
+            }
+        }
+    }
+    
+    // retain used blockss
     for (int p = 0; p < populations.size(); p++) {
         
         for (int f = 0; f < populations.at(p).females.size(); f++) {

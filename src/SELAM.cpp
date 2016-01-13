@@ -87,6 +87,7 @@ int main ( int argc, char **argv ) {
     
     //// initialize subpopulations
     pop.initialize_ancestry() ;
+        
     if (custom_output) {
         while (pop.output.at(pop.curr_output).gen == 0 && pop.curr_output < pop.output.size())  {
             pop.print_stats_custom();
@@ -101,7 +102,7 @@ int main ( int argc, char **argv ) {
     if ( pop.output.size() > 0 ) {
         options.generations = pop.output.at(pop.output.size()-2).gen + 1 ;
     }
-  
+    
     //// evolve populations
     for ( int g = 1 ; g < options.generations ; g ++ ) {
         /// throw out the trash
@@ -113,7 +114,6 @@ int main ( int argc, char **argv ) {
         pop.update_demography(g);
         pop.migrate();
         pop.select_parents();
-
         
         // now create new offspring and add them to the appropriate subpopulation
         if (!options.hermaphroditic) {
