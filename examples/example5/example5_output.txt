@@ -1,0 +1,1 @@
+200	0	100	0	example5_population.txt

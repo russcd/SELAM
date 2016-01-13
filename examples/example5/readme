@@ -1,0 +1,10 @@
+This will simulate admixture between three ancestral populations. 
+
+The frist two admix immediately, and then during a population expansion, 
+there is additional admixture with a third ancestral population. 
+
+This models a single DMI between two loci of varying frequencies 
+within the ancestral populations at sites 0.2 and 0.8. 
+
+
+./src/SELAM -d example5_demography.txt -o example5_output.txt -s example5_selection.txt -f example5_frequency.txt -c 2 1 0
