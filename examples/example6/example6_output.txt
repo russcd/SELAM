@@ -1,0 +1,3 @@
+20	0	15	15	example6_gen20.txt
+50	0	15	15	example6_gen50.txt
+100	0	15	15	example6_gen100.txt

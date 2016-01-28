@@ -1,0 +1,26 @@
+This example demonstrates a use of SELAM wherein each chromosome is uniquely marked. 
+This may be useful if, e.g., one intends to study the inheritence of mutations on 
+unique haplotypes. It is straightforward to add mutations generated using 
+coalescent software to each unique haplotype in the output individuals. 
+
+This example is designed to simulate a founder population 
+that expands in a novel environment. 
+
+This population is founded initially by 6 females and 4 males. Notice that each 
+individual must be created in a subpopulation prior to use to ensure that each 
+of their chromosomes is uniquely labeled. E.g. the first female has chromosomes 
+labeled 0 and 1. 
+
+Suggested command line is:
+
+./SELAM -d example6_demography.txt -o example6_output.txt -c 3 2.1 2.4 0.9 -m 0
+
+This will therefore simulate a genome of three chromsomes, with two autosomes of lengths
+2.1 and 2.4 morgans, and one X of length 0.9 morgans. Males have no recombination, 
+i.e. as in drosophila, hence morgans supplied are twice as large for autosomes when 
+sex-averaged. 
+
+This will output 15 males and 15 females at generations 20, 50, and 100. 
+
+Also notice that because generation 1 is used to produce heterozygous uniquely 
+labelled inviduals, this simulation effectively starts at generation 2. 
