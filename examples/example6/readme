@@ -17,8 +17,8 @@ Suggested command line is:
 
 This will therefore simulate a genome of three chromsomes, with two autosomes of lengths
 2.1 and 2.4 morgans, and one X of length 0.9 morgans. Males have no recombination, 
-i.e. as in drosophila, hence morgans supplied are twice as large for autosomes when 
-sex-averaged. 
+i.e. as in drosophila, hence morgans supplied are half as large for autosomes when 
+sex-averaged rates are computed. 
 
 This will output 15 males and 15 females at generations 20, 50, and 100. 
 
