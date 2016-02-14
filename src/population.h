@@ -1056,14 +1056,14 @@ void population::create_offspring(map<int, map<int, map<int, vector<individual*>
                     }
                     
                     // determine how many recombination events will take place
-                    vector<float> dad_sites;
-                    for (int c = 0; c < gsl_ran_poisson(rng, (chromosome_lengths.at(chrom) * male_recomb_scalar)); c++) {
-                        dad_sites.push_back(gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)));
+                    vector<float> dad_sites( gsl_ran_poisson(rng, (chromosome_lengths.at(chrom) * male_recomb_scalar)) ) ;
+                    for (int c = 0; c < dad_sites.size(); c++) {
+                        dad_sites.at(c) = gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)) ;
                     }
 
-                    vector<float> mom_sites;
-                    for (int c = 0; c < gsl_ran_poisson(rng, chromosome_lengths.at(chrom)); c++) {
-                        mom_sites.push_back(gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)));
+                    vector<float> mom_sites( gsl_ran_poisson(rng, chromosome_lengths.at(chrom)) ) ;
+                    for (int c = 0; c < mom_sites.size(); c++) {
+                        mom_sites.at(c) = gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)) ;
                     }
 
                     // no recombination for moms
