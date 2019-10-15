@@ -5,10 +5,10 @@ GSL_LIBS = $(shell gsl-config --libs)
 CFLAGS = $(shell gsl-config --cflags) 
 
 all:
-## IF TCMALLOC IS NOT INSTALLED, COMMENT OUT THE FOLLOWING LINE 
+## IF TCMALLOC IS INSTALLED, COMMENT OUT THE FOLLOWING LINE 
 ## BY PLACING A # IN FRONT OF THE FOLLOWING LINE AND REMOVE '#' ON THE NEXT LINE
-	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(TCFLAGS) $(GSL_LIBS) $(CFLAGS) -o SELAM
-#	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(GSL_LIBS) $(CFLAGS) -o SELAM
+#	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(TCFLAGS) $(GSL_LIBS) $(CFLAGS) -o SELAM
+	$(LINK.cc) -std=c++0x -O3 SELAM.cpp $(GSL_LIBS) $(CFLAGS) -o SELAM
 	$(LINK.cc) -std=c++0x SELAM_STATS.cpp -o SELAM_STATS
 
 
