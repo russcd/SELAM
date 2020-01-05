@@ -82,7 +82,7 @@ public:
     void select_parents();
     individual* choose_dad(int from, individual* mom);
     void check_parents();                           // only used to debug and make sure subpopulation parent maps were created correctly
-    void create_offspring(map<int, map<int, map<int, vector<individual*> > > > &parents, bool males);
+    void create_offspring(map<int, map<int, map<int, vector<individual*> > > > &parents, bool males, cmd_line options);
     vector<ancestry_block*> recombine(vector<float> &sites, vector<ancestry_block*> &c1, vector<ancestry_block*> &c2);
     ancestry_block* recombine_block(ancestry_block *b1, ancestry_block *b2, float &site);
     void add_offspring(); 
@@ -1033,7 +1033,7 @@ individual* population::choose_dad(int from, individual* mom) {
 }
 
 
-void population::create_offspring(map<int, map<int, map<int, vector<individual*> > > > &parents, bool males) {
+void population::create_offspring(map<int, map<int, map<int, vector<individual*> > > > &parents, bool males, cmd_line options) {
     
     for (int p = 0; p < populations.size(); p++) {          // iterate through each subpopulation; p = to
         for (int k = 0; k < populations.size(); k++) {      // iterate through other subpopulations; k = from
@@ -1057,13 +1057,19 @@ void population::create_offspring(map<int, map<int, map<int, vector<individual*>
                     
                     // determine how many recombination events will take place
                     vector<float> dad_sites( gsl_ran_poisson(rng, (chromosome_lengths.at(chrom) * male_recomb_scalar)) ) ;
-                    for (int c = 0; c < dad_sites.size(); c++) {
+                    for (int c = dad_sites.size() - 1 ; c>= 0 ; c-- ) {
                         dad_sites.at(c) = gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)) ;
+                        if ( gsl_ran_flat(rng,0,1) < options.gc_fraction ) {
+			    dad_sites.push_back( dad_sites[c] + gsl_ran_exponential(rng, options.gc_rate ) ) ;
+			}
                     }
 
                     vector<float> mom_sites( gsl_ran_poisson(rng, chromosome_lengths.at(chrom)) ) ;
                     for (int c = 0; c < mom_sites.size(); c++) {
                         mom_sites.at(c) = gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)) ;
+			if ( gsl_ran_flat(rng,0,1) < options.gc_fraction ) {
+                            mom_sites.push_back( mom_sites[c] + gsl_ran_exponential(rng, options.gc_rate ) ) ;
+                        }
                     }
 
                     // no recombination for moms

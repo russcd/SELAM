@@ -119,9 +119,9 @@ int main ( int argc, char **argv ) {
         
         // now create new offspring and add them to the appropriate subpopulation
         if (!options.hermaphroditic) {
-            pop.create_offspring(pop.total_male_parents, true);
+            pop.create_offspring(pop.total_male_parents, true, options);
         }
-        pop.create_offspring(pop.total_fem_parents, false);
+        pop.create_offspring(pop.total_fem_parents, false, options);
         pop.add_offspring();
         
        if (custom_output) {

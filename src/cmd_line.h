@@ -21,6 +21,9 @@ class cmd_line {
 	
 public:
     
+    float gc_fraction ; 			/// fraction of recombination events that are GC's
+    float gc_rate ;				/// mean of exponentially distributed gc tract length distribution
+
     int stats_frequency ;                       /// how often to produce stats estimates
     int number_subpopulations ;                 /// number of island style subpopulations
     float generations ;                         /// generations to run this experiment for
@@ -48,6 +51,9 @@ public:
 void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
     
     //// DEFAULTS
+    gc_fraction = 0 ;
+    gc_rate = 0 ;
+
     stats_frequency = 1 ; 
     generations = 1500 ;                        ////        number of generations to run simulation for
     seed = time(NULL) ;                         ////        if we are running many simultaneous instances of this program THIS NEEDS TO BE SET
@@ -77,6 +83,10 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
         }
         if ( strcmp(argv[i],"--seed") == 0 ) {
             seed = atoi(argv[++i]) ;
+        }
+        if ( strcmp(argv[i],"--gc") == 0 ) {
+            gc_fraction = atof( argv[++i] ) ;
+            gc_rate = atof( argv[++i] ) ;
         }
         if ( strcmp(argv[i],"-g") == 0 ) {
             generations = atoi( argv[++i] ) ;
