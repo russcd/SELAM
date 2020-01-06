@@ -1065,7 +1065,7 @@ void population::create_offspring(map<int, map<int, map<int, vector<individual*>
                     }
 
                     vector<float> mom_sites( gsl_ran_poisson(rng, chromosome_lengths.at(chrom)) ) ;
-                    for (int c = 0; c < mom_sites.size(); c++) {
+                    for (int c = mom_sites.size() - 1 ; c >= 0 ; c-- ) {
                         mom_sites.at(c) = gsl_ran_flat(rng, 0, chromosome_lengths.at(chrom)) ;
 			if ( gsl_ran_flat(rng,0,1) < options.gc_fraction ) {
                             mom_sites.push_back( mom_sites[c] + gsl_ran_exponential(rng, options.gc_rate ) ) ;
