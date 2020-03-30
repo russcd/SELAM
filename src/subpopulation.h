@@ -37,7 +37,7 @@ public:
     map<int, float> num_anc_female;
 
     void compute_fitness( vector<individual> &pop, vector<vector<float> > &sites_to_track, vector<epistatic_selection> &DMI,
-                        vector<single_locus_selection> &sl, float &ancestry_block_length, bool males) ;
+                        vector<single_locus_selection> &sl, vector<mni> &mni, float &ancestry_block_length, bool males) ;
 
 
     void initialize_gsl(int m, bool male) {
@@ -54,7 +54,7 @@ public:
 /* Given a particular sex-specific population POP and specific sites SITES_TO_TRACK, computes fitness based on epistatic selection DMI and 
  * single locus selection SL. Ancestry block length ANCESTRY_BLOCK_LENGTH and a list of ancestry blocks RECOMBINANT_ANCESTRY_TRACTS allow
  * one to locate the seleted sites. */
-void subpopulation::compute_fitness ( vector<individual> &pop, vector<vector<float> > &sites_to_track, vector<epistatic_selection> &DMI, vector<single_locus_selection> &sl, float &ancestry_block_length, bool males ) {
+void subpopulation::compute_fitness ( vector<individual> &pop, vector<vector<float> > &sites_to_track, vector<epistatic_selection> &DMI, vector<single_locus_selection> &sl, vector<mni> &mni, float &ancestry_block_length, bool males ) {
     
     double fitness[pop.size()] ;
     
@@ -94,6 +94,11 @@ void subpopulation::compute_fitness ( vector<individual> &pop, vector<vector<flo
         for ( int s = 0 ; s < sl.size() ; s ++ ) {
             fitness[i] *= sl.at(s).selection_coefficients.at(genotypes[sl.at(s).chromosome][sl.at(s).position]) ;
         }
+
+	/// now compute the mni fitness
+        for ( int s = 0 ; s < mni.size() ; s ++ ) {
+	    fitness[i] *= mni.at(s).selection_coefficients.at(pop.at(i).mtdna).at(genotypes[mni.at(s).chromosome][mni.at(s).position]) ;
+	}
     }
     
     /// now update lookup table based on fitnesses

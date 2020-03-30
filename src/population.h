@@ -100,10 +100,10 @@ void population::compute_fitness () {
     for (int k = 0; k < populations.size(); k++) {
 
         populations.at(k).compute_fitness( populations.at(k).females, populations.at(k).selection.female_sites, populations.at(k).selection.dmi_female,
-                                            populations.at(k).selection.sl_female, ancestry_block_length, false );
+                                            populations.at(k).selection.sl_female, populations.at(k).selection.mni_female, ancestry_block_length, false );
         if (!hermaphroditic) {
             populations.at(k).compute_fitness(populations.at(k).males, populations.at(k).selection.male_sites, populations.at(k).selection.dmi_male, 
-                                                populations.at(k).selection.sl_male, ancestry_block_length, true ) ;
+                                                populations.at(k).selection.sl_male, populations.at(k).selection.mni_male, ancestry_block_length, true ) ;
         }
     }
 }
@@ -251,7 +251,7 @@ void population::check_selection_file(cmd_line &options, string selection_file) 
         string type; string sex;
         line_stream >> type >> sex;
 
-        if (type != "S" && type != "M" && type != "P" && type != "D") {
+        if (type != "S" && type != "M" && type != "P" && type != "D" && type != "N") {
             options.error(6.2, type);
         }
 
@@ -715,6 +715,45 @@ void population::read_selection_file ( string selection_file ) {
                 sites_to_track.at(new_sl.chromosome).push_back(new_sl.position);
             }
         }
+
+	else if ( type = 'N' ) {
+
+	    mni new_mni ;
+	    line_stream >> new_mni.chromosome >> new_mni.position ;
+
+	    float coeff1;
+            float coeff2;
+            float coeff3;
+
+            /// next three positions should be selection parameters for mtDNA ancestry 0 
+	    new_mni.selection_coefficients.resize(2) ; 
+            line_stream >> coeff1 >> coeff2 >> coeff3;
+            new_mni.selection_coefficients[0].push_back(coeff1);
+            new_mni.selection_coefficients[0].push_back(coeff2);
+            new_mni.selection_coefficients[0].push_back(coeff3);
+
+	    ////
+	    line_stream >> coeff1 >> coeff2 >> coeff3;
+            new_mni.selection_coefficients[1].push_back(coeff1);
+            new_mni.selection_coefficients[1].push_back(coeff2);
+            new_mni.selection_coefficients[1].push_back(coeff3);
+
+
+            /// store it in appropriate vectors for all subpopulations
+            for ( int p = 0 ; p < populations.size() ; p ++ ) {
+                if ( sex == 'M' || sex == 'A' ) {
+                    populations.at(p).selection.mni_male.push_back( new_mni ) ;
+                    populations.at(p).selection.male_sites.at(new_mni.chromosome).push_back(new_mni.position) ;
+                }
+                if ( sex == 'F' || sex == 'A' ) {
+                    populations.at(p).selection.mni_female.push_back( new_mni ) ;
+                    populations.at(p).selection.female_sites.at(new_mni.chromosome).push_back(new_mni.position) ;
+                }
+
+                sites_to_track.at(new_mni.chromosome).push_back(new_mni.position);
+                sites_to_track.at(new_mni.chromosome).push_back(new_mni.position);
+            }
+        }
     }
     /// remove duplicate selection sites and only track one
     for ( int p = 0 ; p < populations.size() ; p ++ ) {
@@ -775,6 +814,7 @@ void population::initialize_ancestry ( ) {
     parental.resize(num_anc);
     for (int i = 0; i < num_anc; i++) {
         individual female;
+        female.mtdna = i ;
         female.chromosomes.resize(chromosome_lengths.size() * 2);
         /// create both by iterating through block structure
         for ( int r = 0 ; r < chromosome_lengths.size() ; r ++ ) {
@@ -859,6 +899,7 @@ void population::initialize_ancestry ( ) {
 
 void population::add_mutations(individual old, individual &new_ind, int a, bool male) {
     
+    new_ind.mtdna = old.mtdna ;
     new_ind.chromosomes.resize( old.chromosomes.size() ) ;
     
     for (int r = 0; r < sites_to_track.size(); r++) {
@@ -1080,6 +1121,8 @@ void population::create_offspring(map<int, map<int, map<int, vector<individual*>
                         offspring.chromosomes.push_back(recombine(mom_sites, par_vec.at(1)->chromosomes.at(chrom*2), par_vec.at(1)->chromosomes.at(chrom*2+1)));
                     }
 
+		    /// get the mtdna from mom
+                    offspring.mtdna = par_vec.at(1)->mtdna ;
                     
                     // if we're on the dad's x, give it to females only
                     if (chrom*2+1 == par_vec.at(0)->chromosomes.size()) {

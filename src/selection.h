@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <time.h> 
+#include <time.h>
 #include <vector>
 #include <sstream>
 #include <fstream>
@@ -41,6 +41,14 @@ public:
     vector< vector<float> > selection_coefficients ;        // 3x2 vector of A alleles paired with B alleles (ex. AA & BB, Aa & Bb, etc.)
 } ;
 
+// a class for mito-nuclear interactions
+class mni {
+public:
+    int chromosome ;
+    float position ;
+    vector<vector<float> > selection_coefficients ;
+} ;
+
 class output_parameters {
 public:
     int gen;
@@ -62,6 +70,9 @@ public:
 
     vector<epistatic_selection> dmi_male ;              // Epistatic and single_locus for males
     vector<single_locus_selection> sl_male ;
+
+    vector<mni> mni_male ;             // selection for mito-nuclear interactions
+    vector<mni> mni_female ;             // selection for mito-nuclear interactions
     
     vector<vector<float> > male_sites ;                 // selected sites for males and females
     vector<vector<float> > female_sites ;
