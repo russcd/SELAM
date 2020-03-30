@@ -65,7 +65,7 @@ public:
     void check_demography_file(cmd_line &options, string demography_file);
     void check_selection_file(cmd_line &options, string selection_file);
     void read_demography_file( string demography_file, cmd_line &options ) ;
-    void read_selection_file( string selection_file ) ;
+    void read_selection_file( string selection_file, int num_anc ) ;
     void read_output_file(string output_file);
     void read_freq_file(string freq_file);
     void default_freq();
@@ -592,7 +592,7 @@ void population::initialize_demography(int g) {
 }
 
 /* Feed in selection parameters to the subpopulations specific vectors from the external file SELECTION_FILE. */
-void population::read_selection_file ( string selection_file ) {
+void population::read_selection_file ( string selection_file, int num_anc ) {
     
     /// read file
     ifstream sel_stream ( selection_file.c_str() ) ;
@@ -726,18 +726,14 @@ void population::read_selection_file ( string selection_file ) {
             float coeff3;
 
             /// next three positions should be selection parameters for mtDNA ancestry 0 
-	    new_mni.selection_coefficients.resize(2) ; 
-            line_stream >> coeff1 >> coeff2 >> coeff3;
-            new_mni.selection_coefficients[0].push_back(coeff1);
-            new_mni.selection_coefficients[0].push_back(coeff2);
-            new_mni.selection_coefficients[0].push_back(coeff3);
+	    new_mni.selection_coefficients.resize(num_anc) ;
 
-	    ////
-	    line_stream >> coeff1 >> coeff2 >> coeff3;
-            new_mni.selection_coefficients[1].push_back(coeff1);
-            new_mni.selection_coefficients[1].push_back(coeff2);
-            new_mni.selection_coefficients[1].push_back(coeff3);
-
+            for ( int a = 0 ; a < num_anc ; a ++ ) {
+	        line_stream >> coeff1 >> coeff2 >> coeff3;
+        	new_mni.selection_coefficients[a].push_back(coeff1);
+                new_mni.selection_coefficients[a].push_back(coeff2);
+                new_mni.selection_coefficients[a].push_back(coeff3);
+	    }
 
             /// store it in appropriate vectors for all subpopulations
             for ( int p = 0 ; p < populations.size() ; p ++ ) {

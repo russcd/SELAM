@@ -68,7 +68,7 @@ int main ( int argc, char **argv ) {
     //// store selection
     selection_parameters selection ;
     if (options.selection_file) {
-        pop.read_selection_file( options.selection_file) ;
+        pop.read_selection_file( options.selection_file, pop.num_anc) ;
     }
     bool custom_output = false;
     if (options.output_file) {
