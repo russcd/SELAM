@@ -46,6 +46,9 @@ public:
     void read_cmd_line ( int argc, char *argv[] ) ;
     void error(double type, string line);
 
+    // adding for branch "check-if-lost"
+    vector<float> sites_to_check ;
+
 } ;
 
 void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
@@ -124,6 +127,9 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
         }
         if (strcmp(argv[i], "-m") == 0) {
             male_recomb_scalar = atof(argv[++i]);
+        }
+        if (strcmp(argv[i], "--check-if-lost") == 0) {
+            sites_to_check.push_back(atof(argv[++i]));
         }
     }
 
