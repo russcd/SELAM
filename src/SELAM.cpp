@@ -105,8 +105,48 @@ int main ( int argc, char **argv ) {
     }
     
     //// evolve populations
-    for ( int g = 1 ; g < options.generations ; g ++ ) {
-                
+    for ( int g = 1 ; g < options.generations ; g++ ) {
+    
+	/// check if sites we are tracking were lost
+        if ( options.sites_to_check.size() > 0 && g % options.stats_frequency == 0 ) {
+            bool reset = false ;
+            for ( int c = 0 ; c < options.chrom_lengths.size() ; c ++ ) {
+                if ( options.sites_to_check[c].size() == 0 ) {
+                    continue ;
+		}
+	        map<float, int> freq ;
+	        int total = 0 ;
+                for (int p = 0; p < pop.populations.size(); p++) {      // iterate through all subpopulations
+                    for (int m = 0; m < pop.populations.at(p).males.size(); m++) {      // iterate through male individuals first
+                        for (int a = 0; a < pop.populations.at(p).males.at(m).chromosomes.at(c).size(); a++) {      // access each ancestry block in the chromosome
+                            for (int s = 0; s < pop.populations.at(p).males.at(m).chromosomes.at(c).at(a)->selected_mutations.size(); s++) {
+                                freq[pop.populations.at(p).males.at(m).chromosomes.at(c).at(a)->selected_mutations.at(s)]++;        // keep a running tally of all selected si$
+                            }
+                    	}
+                    }
+                    // do the same for females
+                    for (int f = 0; f < pop.populations.at(p).females.size(); f++) {
+                        for (int a = 0; a < pop.populations.at(p).females.at(f).chromosomes.at(c).size(); a++) {
+                            for (int s = 0; s < pop.populations.at(p).females.at(f).chromosomes.at(c).at(a)->selected_mutations.size(); s++) {
+                                freq[pop.populations.at(p).females.at(f).chromosomes.at(c).at(a)->selected_mutations.at(s)]++;
+			    }
+                        }
+                    }
+                }
+		for ( int s = 0 ; s < options.sites_to_check[c].size() ; s ++ ) {
+                    freq[options.sites_to_check[c][s]] += 0 ; 
+                    cerr << g << "\t" << c << "\t" << options.sites_to_check[c][s] << "\t" << freq[options.sites_to_check[c][s]] << "\n" ;
+		    if ( freq[options.sites_to_check[c][s]] == 0 ) {
+                        reset = true ;
+                    }
+                }
+            }
+            if ( reset == true ) {
+		cerr << "selected site lost\n" ;
+		return(-1) ; 
+            }
+        }
+
         /// throw out the trash
         if ( g % options.garbage_freq == 0 ) {
             pop.garbage_collect();
@@ -130,6 +170,7 @@ int main ( int argc, char **argv ) {
                 pop.curr_output ++ ;
             }
        }
+
        else if (g % options.stats_frequency == 0) {
             pop.print_stats(g);
        }
