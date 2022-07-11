@@ -213,7 +213,10 @@ void cmd_line::read_cmd_line(int argc, char *argv[]) {
             genotype_positions = argv[++i] ;
             G = true;
         }
-	}
+        if ( strcmp(argv[i],"--test") == 0 ) {
+            cerr << "Test: SELAM_STATS compiled as expected." << endl;
+	    exit(0);
+	}}
 }
 
 void tract_info::read_input(string input) {
