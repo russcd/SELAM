@@ -78,6 +78,10 @@ void cmd_line::read_cmd_line ( int argc, char *argv[] ) {
 
     /// SET BY COMMAND LINE
     for (int i=1; i<argc; i++) {
+        if ( strcmp(argv[i],"--test") == 0 ) {
+            cerr << "Test: SELAM compiled as expected." << endl;
+	    exit(0);
+        }
         if ( strcmp(argv[i],"--garbage") == 0 ) {
             garbage_freq = atoi(argv[++i]) ;
         }
