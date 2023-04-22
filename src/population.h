@@ -716,7 +716,7 @@ void population::read_selection_file ( string selection_file, int num_anc ) {
             }
         }
 
-	else if ( type = 'N' ) {
+	else if ( type == 'N' ) {
 
 	    mni new_mni ;
 	    line_stream >> new_mni.chromosome >> new_mni.position ;
